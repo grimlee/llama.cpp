@@ -43,5 +43,5 @@ jobs:
         with:
           name: llama-vulkan-mtp-windows
           path: |
-            build/bin/Release/llama-server.exe
-            build/bin/Release/*.dll
+            build/bin/llama-server.exe
+            build/bin/*.dll
