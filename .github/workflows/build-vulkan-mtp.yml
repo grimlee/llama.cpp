@@ -32,6 +32,11 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release --target llama-server -j4
+        
+      - name: List build artifacts
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Path build -Include *.exe, *.dll
 
       - name: Upload
         uses: actions/upload-artifact@v4
