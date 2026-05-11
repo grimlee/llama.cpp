@@ -17,6 +17,7 @@ jobs:
         run: |
           git config user.email "ci@build.local"
           git config user.name "CI"
+          git remote add upstream https://github.com/ggml-org/llama.cpp
           git fetch origin pull/22673/head:mtp-pr
           git merge mtp-pr --no-edit
 
