@@ -28,9 +28,7 @@ jobs:
 
       - name: Configure
         run: |
-          cmake -B build -G "Ninja" `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DGGML_VULKAN=ON
+          cmake -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DGGML_VULKAN=ON
 
       - name: Build
         run: cmake --build build --config Release -j4
