@@ -1,1 +1,45 @@
+name: Build llama.cpp Vulkan + MTP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Merge MTP PR #22673
+        run: |
+          git config user.email "ci@build.local"
+          git config user.name "CI"
+          git fetch origin pull/22673/head:mtp-pr
+          git merge mtp-pr --no-edit
+
+      - name: Install Vulkan SDK
+        uses: humbletim/install-vulkan-sdk@v1.1.1
+        with:
+          version: latest
+          cache: true
+
+      - name: Configure
+        run: |
+          cmake -B build -G "Ninja" `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DGGML_VULKAN=ON
+
+      - name: Build
+        run: cmake --build build --config Release -j4
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: llama-vulkan-mtp-windows
+          path: |
+            build/bin/*.exe
+            build/bin/*.dll
 
