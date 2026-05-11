@@ -8,17 +8,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout MTP branch
         uses: actions/checkout@v4
         with:
+          repository: am17an/llama.cpp
+          ref: mtp-clean
           fetch-depth: 0
-
-      - name: Merge MTP PR #22673
-        run: |
-          git config user.email "ci@build.local"
-          git config user.name "CI"
-          git fetch https://github.com/am17an/llama.cpp mtp-clean:mtp-pr
-          git merge mtp-pr --no-edit
 
       - name: Install Vulkan SDK
         shell: pwsh
@@ -48,3 +43,4 @@ jobs:
             build/bin/*.exe
             build/bin/*.dll
 
+      
