@@ -21,10 +21,15 @@ jobs:
           git merge mtp-pr --no-edit
 
       - name: Install Vulkan SDK
-        uses: humbletim/install-vulkan-sdk@v1.1.1
-        with:
-          version: latest
-          cache: true
+        shell: pwsh
+        run: |
+          $version = "1.3.296.0"
+          $url = "https://sdk.lunarg.com/sdk/download/$version/windows/VulkanSDK-$version-Installer.exe"
+          Invoke-WebRequest -Uri $url -OutFile VulkanSDK.exe
+          Start-Process -FilePath VulkanSDK.exe -Args "--accept-licenses --default-answer --confirm-command install" -Wait
+          $sdkPath = (Get-ChildItem "C:\VulkanSDK" | Sort-Object Name -Descending | Select-Object -First 1).FullName
+          echo "VULKAN_SDK=$sdkPath" >> $env:GITHUB_ENV
+          echo "$sdkPath\Bin" >> $env:GITHUB_PATH
 
       - name: Configure
         run: |
