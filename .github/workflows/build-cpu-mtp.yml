@@ -1,0 +1,40 @@
+name: Build llama.cpp CPU + MTP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout MTP branch
+        uses: actions/checkout@v4
+        with:
+          repository: am17an/llama.cpp
+          ref: mtp-clean
+          fetch-depth: 0
+      - name: Install Ninja
+        id: install_ninja
+        run: |
+          choco install ninja
+    
+      - name: Configure
+        run: |
+          cmake -S . -B build -G "Ninja Multi-Config" -D CMAKE_TOOLCHAIN_FILE=cmake/x64-windows-llvm.cmake -DGGML_NATIVE=OFF -DLLAMA_BUILD_SERVER=ON -DGGML_RPC=ON -DBUILD_SHARED_LIBS=OFF -DLLAMA_BUILD_BORINGSSL=ON
+
+      - name: Build
+        run: cmake --build build --config Release --target llama-server -j4
+        
+      - name: List build artifacts
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Path build -Include *.exe, *.dll
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: llama-vulkan-mtp-windows
+          path: |
+            build/bin/Release/llama-server.exe
+            build/bin/Release/*.dll
